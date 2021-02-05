@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment, useState, useEffect } from 'react';
+import './components/Styles.css';
+import Header from './components/Header';
+import Formulario from './components/Formulario';
+import ListadoNoticias from './components/ListadoNoticias';
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+
+  const [categoria, guardarCategoria] = useState('');
+  const [noticias, guardarNoticias] = useState([]);
+
+  useEffect(() => {
+    const consultarAPI = async () => {
+      const url = `https://newsapi.org/v2/top-headlines?country=us&category=${categoria}&apiKey=21fb50e8e36e44d1bfc09a8df3d8db8b`;
+
+      const respuesta = await fetch(url);
+      const noticias = await respuesta.json();
+
+      guardarNoticias(noticias.articles);
+    }
+    consultarAPI();
+  }, [categoria]);
+
+
+  return(
+    <Fragment>
+      <Header
+        titulo='THE REAL NEWS'
+      />
+      <div>
+        <Formulario
+          guardarCategoria={guardarCategoria}
+        />
+        <ListadoNoticias 
+            noticias={noticias}
+        />
+        
+      </div>
+    </Fragment>
   );
+  
 }
 
 export default App;
